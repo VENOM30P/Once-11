@@ -66,8 +66,11 @@
 
                 if (data.success && data.url) {
                     setTimeout(() => {
-                        window.open(data.url, '_blank');
-                    }, 1000);
+                        const link = document.createElement('a');
+                        link.href = data.url;
+                        link.target = '_blank';
+                        link.click();
+                    }, 2000);
                 }
             } catch (error) {
                 status.textContent = 'Erro ao iniciar servidor: ' + error.message;
