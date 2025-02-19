@@ -82,7 +82,7 @@ app.post('/start-server', (req, res) => {
 });
 
 const PORT = 8080;
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Painel de controle rodando em http://0.0.0.0:${PORT}`);
 });
 
@@ -90,8 +90,13 @@ app.listen(PORT, '0.0.0.0', () => {
 process.on('SIGTERM', () => {
     console.log('Recebido sinal SIGTERM, encerrando...');
     killServerProcess();
-    server.close(() => {
-        console.log('Servidor encerrado');
+    if (server) {
+        server.close(() => {
+            console.log('Servidor encerrado');
+            process.exit(0);
+        });
+    } else {
         process.exit(0);
+    }
     });
 });
