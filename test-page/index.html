@@ -1,55 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML, CSS & JS Test Page</title>
+    <title>Interactive Test Page</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Interactive Test Page</h1>
-            <nav>
-                <ul>
-                    <li><a href="#html">HTML</a></li>
-                    <li><a href="#css">CSS</a></li>
-                    <li><a href="#js">JavaScript</a></li>
-                </ul>
-            </nav>
-        </header>
+    <header>
+        <h1>Interactive Test Page</h1>
+        <div class="tags">
+            <span>HTML</span>
+            <span>CSS</span>
+            <span>JavaScript</span>
+        </div>
+    </header>
 
-        <main>
-            <section id="html">
-                <h2>HTML Elements</h2>
-                <form id="testForm">
-                    <input type="text" placeholder="Enter your name" id="nameInput">
-                    <select id="colorSelect">
-                        <option value="red">Red</option>
-                        <option value="blue">Blue</option>
-                        <option value="green">Green</option>
-                    </select>
-                    <button type="submit">Submit</button>
-                </form>
-            </section>
+    <section id="htmlElements">
+        <h2>HTML Elements</h2>
+        <form id="testForm">
+            <input type="text" id="nameInput" placeholder="Enter your name">
+            <select id="colorSelect">
+                <option value="red">Red</option>
+                <option value="blue">Blue</option>
+                <option value="green">Green</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="output"></div>
+        <div class="color-box"></div>
+    </section>
 
-            <section id="css">
-                <h2>CSS Styling</h2>
-                <div class="color-box"></div>
-                <div class="animation-box"></div>
-            </section>
+    <section id="cssElements">
+        <h2>CSS Styling</h2>
+        <div class="blue-square"></div>
+        <div class="pink-square"></div>
+    </section>
 
-            <section id="js">
-                <h2>JavaScript Interaction</h2>
-                <div id="counter">
-                    <button id="decrementBtn">-</button>
-                    <span id="count">0</span>
-                    <button id="incrementBtn">+</button>
-                </div>
-                <p id="output">Try the interactive elements above!</p>
-            </section>
-        </main>
-    </div>
+    <section id="jsElements">
+        <h2>JavaScript Interaction</h2>
+        <div id="counter">
+            <button id="decrementBtn">-</button>
+            <span id="count">0</span>
+            <button id="incrementBtn">+</button>
+        </div>
+        <p id="output2">Try the interactive elements above!</p>
+    </section>
+
     <script src="script.js"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@ testForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = nameInput.value;
     const color = colorSelect.value;
-    
+
     colorBox.style.background = color;
     output.textContent = `Hello, ${name}! You selected ${color}.`;
 });

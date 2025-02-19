@@ -6,22 +6,84 @@
 
 body {
     font-family: Arial, sans-serif;
-    line-height: 1.6;
-    background-color: #f0f2f5;
-}
-
-.container {
-    max-width: 800px;
-    margin: 0 auto;
     padding: 20px;
+    background: #f0f0f0;
 }
 
 header {
-    background: linear-gradient(45deg, #2196F3, #21CBF3);
-    color: white;
+    background: linear-gradient(135deg, #0099ff, #0066cc);
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 20px;
+    color: white;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+.tags {
+    display: flex;
+    gap: 10px;
+}
+
+.tags span {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+input, select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background: #0099ff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.color-box {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.blue-square {
+    width: 100px;
+    height: 100px;
+    background: #0099ff;
+    margin-bottom: 10px;
+}
+
+.pink-square {
+    width: 50px;
+    height: 50px;
+    background: #ff69b4;
 }
 
 nav ul {
@@ -38,46 +100,6 @@ nav a {
 
 nav a:hover {
     color: #FFD700;
-}
-
-section {
-    background: white;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-form {
-    display: flex;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-input, select, button {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-button {
-    background: #2196F3;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background: #1976D2;
-}
-
-.color-box {
-    width: 100px;
-    height: 100px;
-    background: #2196F3;
-    margin: 20px 0;
-    transition: background 0.3s;
 }
 
 .animation-box {
