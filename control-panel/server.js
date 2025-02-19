@@ -74,11 +74,12 @@ app.post('/start-server', (req, res) => {
             serverProcess = null;
         });
 
-        // Verifica se o servidor iniciou corretamente
+        // Verifica se o servidor iniciou corretamente e redireciona
         setTimeout(() => {
             if (serverProcess && !serverProcess.killed) {
                 console.log('Servidor iniciado com sucesso na porta 3000');
-                res.json({ success: true, message: 'Servidor iniciado com sucesso na porta 3000!' });
+                const appUrl = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+                res.json({ success: true, message: 'Servidor iniciado com sucesso!', url: appUrl });
             } else {
                 console.error('Falha ao iniciar o servidor');
                 res.status(500).json({ success: false, message: 'Erro ao iniciar o servidor' });

@@ -111,6 +111,11 @@
                 const response = await fetch('/start-server', { method: 'POST' });
                 const data = await response.json();
                 updateStatus(data.message, data.success);
+                if (data.success && data.url) {
+                    setTimeout(() => {
+                        window.open(data.url, '_blank');
+                    }, 1000);
+                }
             } catch (error) {
                 updateStatus('Erro ao iniciar servidor: ' + error.message, false);
             } finally {
