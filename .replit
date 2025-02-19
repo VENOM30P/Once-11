@@ -19,6 +19,10 @@ args = "Git Init"
 task = "workflow.run"
 args = "Test Page Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Control Panel"
+
 [[workflows.workflow]]
 name = "Git Init"
 author = "agent"
@@ -48,9 +52,28 @@ task = "shell.exec"
 args = "node server.js"
 waitForPort = 3000
 
+[[workflows.workflow]]
+name = "Control Panel"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node control-panel/server.js"
+waitForPort = 3001
+
 [deployment]
 run = ["sh", "-c", "bash init_git.sh"]
 
 [[ports]]
 localPort = 3000
 externalPort = 80
+
+[[ports]]
+localPort = 3001
+externalPort = 3001

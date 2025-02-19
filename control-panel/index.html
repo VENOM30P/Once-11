@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #1976D2;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .error {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Painel de Controle</h1>
+    
+    <button class="button" onclick="initGit()">1. Inicializar Repositório Git</button>
+    <button class="button" onclick="startServer()">2. Iniciar Servidor</button>
+    <button class="button" onclick="openChrome()">3. Abrir no Chrome</button>
+    
+    <div id="status"></div>
+
+    <script>
+        async function initGit() {
+            try {
+                const response = await fetch('/init-git', { method: 'POST' });
+                const data = await response.json();
+                updateStatus(data.message, data.success);
+            } catch (error) {
+                updateStatus('Erro ao inicializar Git', false);
+            }
+        }
+
+        async function startServer() {
+            try {
+                const response = await fetch('/start-server', { method: 'POST' });
+                const data = await response.json();
+                updateStatus(data.message, data.success);
+            } catch (error) {
+                updateStatus('Erro ao iniciar servidor', false);
+            }
+        }
+
+        function openChrome() {
+            window.open('http://localhost:3000', '_blank');
+        }
+
+        function updateStatus(message, success) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = success ? 'success' : 'error';
+        }
+    </script>
+</body>
+</html>
