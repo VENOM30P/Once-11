@@ -1,6 +1,6 @@
 const express = require('express');
-const { exec } = require('child_process');
 const path = require('path');
+const { spawn } = require('child_process');
 const app = express();
 
 console.log('Iniciando configuração do servidor do painel de controle...');
@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 // Endpoint para inicializar o Git
 app.post('/init-git', (req, res) => {
     console.log('Iniciando processo de inicialização do Git...');
+    const { exec } = require('child_process'); //Import exec only here
     exec('bash ../init_git.sh', (error, stdout, stderr) => {
         if (error) {
             console.error('Erro ao inicializar Git:', error);
@@ -33,81 +34,55 @@ app.post('/init-git', (req, res) => {
     });
 });
 
-// Gerenciamento do processo do servidor da aplicação
+
 let serverProcess = null;
 
-// Função para matar o processo do servidor se existir
-const killServerProcess = () => {
+function killServerProcess() {
     if (serverProcess) {
-        try {
-            console.log('Finalizando processo do servidor existente...');
-            serverProcess.kill();
-            serverProcess = null;
-        } catch (error) {
-            console.error('Erro ao finalizar processo:', error);
-        }
+        serverProcess.kill();
+        serverProcess = null;
     }
-};
+}
 
-app.post('/start-server', async (req, res) => {
-    console.log('Iniciando servidor da aplicação...');
+app.post('/start-server', (req, res) => {
     try {
-        // Mata processo anterior se existir
-        await killServerProcess();
+        killServerProcess();
 
-        const serverPath = path.join(__dirname, '..', 'server.js');
-        console.log('Iniciando servidor do caminho:', serverPath);
-
-        // Inicia o novo processo do servidor
-        serverProcess = exec(`node ${serverPath}`, (error, stdout, stderr) => {
-            if (error) {
-                console.error('Erro no processo do servidor:', error);
-                return;
-            }
-            console.log('Saída do servidor:', stdout);
-            if (stderr) console.error('Erro do servidor:', stderr);
+        serverProcess = spawn('node', ['server.js'], { 
+            cwd: path.join(__dirname, '..'),
+            stdio: 'pipe'
         });
 
-        // Configura handlers para o processo
-        serverProcess.on('error', (error) => {
-            console.error('Erro no processo do servidor:', error);
+        serverProcess.stdout.on('data', (data) => {
+            console.log(data.toString());
+        });
+
+        serverProcess.stderr.on('data', (data) => {
+            console.error(data.toString());
+        });
+
+        serverProcess.on('close', (code) => {
+            console.log(`Processo do servidor encerrado com código ${code}`);
             serverProcess = null;
         });
 
-        // Verifica se o servidor iniciou corretamente e redireciona
         setTimeout(() => {
             if (serverProcess && !serverProcess.killed) {
-                console.log('Servidor iniciado com sucesso na porta 3000');
                 const appUrl = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
                 res.json({ success: true, message: 'Servidor iniciado com sucesso!', url: appUrl });
             } else {
-                console.error('Falha ao iniciar o servidor');
                 res.status(500).json({ success: false, message: 'Erro ao iniciar o servidor' });
             }
         }, 2000);
-
     } catch (error) {
         console.error('Erro ao iniciar servidor:', error);
-        res.status(500).json({ success: false, message: 'Erro ao iniciar servidor: ' + error.message });
+        res.status(500).json({ success: false, message: 'Erro ao iniciar o servidor' });
     }
 });
 
-// Inicia o servidor do painel de controle na porta 8080
 const PORT = 8080;
-
-console.log('Tentando iniciar o servidor na porta', PORT);
-
-// Verifica se a porta está em uso antes de tentar iniciar
-const server = app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Painel de controle rodando em http://0.0.0.0:${PORT}`);
-}).on('error', (error) => {
-    if (error.code === 'EADDRINUSE') {
-        console.error(`Porta ${PORT} já está em uso. Por favor, verifique se não há outro servidor rodando.`);
-        process.exit(1);
-    } else {
-        console.error('Erro ao iniciar o painel de controle:', error);
-        process.exit(1);
-    }
 });
 
 // Limpeza ao encerrar
