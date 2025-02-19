@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 // Inicia o servidor na porta 3000
 const PORT = 3000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor rodando em https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co:${PORT}`);
+    console.log(`Servidor rodando em https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
 }).on('error', (error) => {
     console.error('Erro ao iniciar servidor:', error);
 });

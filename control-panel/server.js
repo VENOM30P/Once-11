@@ -68,7 +68,7 @@ app.post('/start-server', (req, res) => {
 
         setTimeout(() => {
             if (serverProcess && !serverProcess.killed) {
-                const appUrl = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co:3000`;
+                const appUrl = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
                 res.json({ success: true, message: 'Servidor iniciado com sucesso!', url: appUrl });
             } else {
                 res.status(500).json({ success: false, message: 'Erro ao iniciar o servidor' });
