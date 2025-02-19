@@ -29,18 +29,21 @@ if [ "$current_branch" != "main" ]; then
     git checkout main 2>/dev/null || git checkout -b main
 fi
 
-# Check if remote origin exists
-if ! git remote | grep -q "^origin$"; then
-    echo "Please enter your git remote URL:"
-    read remote_url
-    git remote add origin "$remote_url"
-fi
+# Set the specific remote URL
+REMOTE_URL="https://github.com/VENOM30P/Once-11.git"
+
+# Remove existing origin if it exists
+git remote remove origin 2>/dev/null || true
+
+# Add the new remote
+echo "Setting remote to: $REMOTE_URL"
+git remote add origin "$REMOTE_URL"
 
 # Create initial commit if repository is empty
 if ! git rev-parse HEAD &>/dev/null; then
     # Create a README if it doesn't exist
     if [ ! -f "README.md" ]; then
-        echo "# Project Repository" > README.md
+        echo "# Once-11" > README.md
         echo "Initial project setup" >> README.md
     fi
 
@@ -51,10 +54,10 @@ fi
 # Set upstream and push with error handling
 echo "Attempting to push to remote..."
 if ! git push -u origin main; then
-    echo "Failed to push. Trying to fetch and rebase first..."
+    echo "Failed to push. Trying to fetch and merge first..."
     git fetch origin
-    git rebase origin/main || {
-        echo "Rebase failed. Please resolve conflicts and try again."
+    git pull origin main --allow-unrelated-histories || {
+        echo "Pull failed. You may need to manually resolve conflicts."
         exit 1
     }
     git push -u origin main
