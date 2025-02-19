@@ -124,7 +124,8 @@
         }
 
         function openChrome() {
-            window.open('http://localhost:3000', '_blank');
+            const appUrl = `https://${window.location.hostname.replace('8080', '3000')}`;
+            window.open(appUrl, '_blank');
         }
 
         function updateStatus(message, success) {

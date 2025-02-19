@@ -49,11 +49,11 @@ const killServerProcess = () => {
     }
 };
 
-app.post('/start-server', (req, res) => {
+app.post('/start-server', async (req, res) => {
     console.log('Iniciando servidor da aplicação...');
     try {
         // Mata processo anterior se existir
-        killServerProcess();
+        await killServerProcess();
 
         const serverPath = path.join(__dirname, '..', 'server.js');
         console.log('Iniciando servidor do caminho:', serverPath);
