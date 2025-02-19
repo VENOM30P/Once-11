@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 // Inicia o servidor na porta 3000
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor rodando em http://0.0.0.0:${PORT}`);
 }).on('error', (error) => {
