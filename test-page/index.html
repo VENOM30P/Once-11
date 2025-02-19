@@ -3,49 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Test Page</title>
+    <title>GitRunner Pro</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Interactive Test Page</h1>
-        <div class="tags">
-            <span>HTML</span>
-            <span>CSS</span>
-            <span>JavaScript</span>
-        </div>
+        <h1>GitRunner Pro</h1>
+        <div class="status-bar">Status: <span id="status">Pronto</span></div>
     </header>
 
-    <section id="htmlElements">
-        <h2>HTML Elements</h2>
-        <form id="testForm">
-            <input type="text" id="nameInput" placeholder="Enter your name">
-            <select id="colorSelect">
-                <option value="red">Red</option>
-                <option value="blue">Blue</option>
-                <option value="green">Green</option>
-            </select>
-            <button type="submit">Submit</button>
-        </form>
-        <div id="output"></div>
-        <div class="color-box"></div>
-    </section>
+    <main>
+        <section class="control-panel">
+            <div class="input-group">
+                <input type="text" id="repoUrl" placeholder="URL do Repositório Git">
+                <select id="branchSelect">
+                    <option value="main">main</option>
+                    <option value="master">master</option>
+                    <option value="development">development</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button id="cloneBtn" class="primary">Clonar Repo</button>
+                <button id="pullBtn">Pull</button>
+                <button id="pushBtn">Push</button>
+            </div>
+        </section>
 
-    <section id="cssElements">
-        <h2>CSS Styling</h2>
-        <div class="blue-square"></div>
-        <div class="pink-square"></div>
-    </section>
-
-    <section id="jsElements">
-        <h2>JavaScript Interaction</h2>
-        <div id="counter">
-            <button id="decrementBtn">-</button>
-            <span id="count">0</span>
-            <button id="incrementBtn">+</button>
-        </div>
-        <p id="output2">Try the interactive elements above!</p>
-    </section>
+        <section class="output-panel">
+            <h2>Console Output</h2>
+            <div id="console" class="console"></div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>

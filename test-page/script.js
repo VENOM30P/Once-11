@@ -1,40 +1,72 @@
-// Counter functionality
-let count = 0;
-const countDisplay = document.getElementById('count');
-const decrementBtn = document.getElementById('decrementBtn');
-const incrementBtn = document.getElementById('incrementBtn');
 
-decrementBtn.addEventListener('click', () => {
-    count--;
-    countDisplay.textContent = count;
-});
+document.addEventListener('DOMContentLoaded', () => {
+    const status = document.getElementById('status');
+    const console = document.getElementById('console');
+    const repoUrl = document.getElementById('repoUrl');
+    const branchSelect = document.getElementById('branchSelect');
+    const cloneBtn = document.getElementById('cloneBtn');
+    const pullBtn = document.getElementById('pullBtn');
+    const pushBtn = document.getElementById('pushBtn');
 
-incrementBtn.addEventListener('click', () => {
-    count++;
-    countDisplay.textContent = count;
-});
+    function log(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString();
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.textContent = `[${timestamp}] ${message}`;
+        console.appendChild(entry);
+        console.scrollTop = console.scrollHeight;
+    }
 
-// Form handling
-const testForm = document.getElementById('testForm');
-const nameInput = document.getElementById('nameInput');
-const colorSelect = document.getElementById('colorSelect');
-const output = document.getElementById('output');
-const colorBox = document.querySelector('.color-box');
+    function updateStatus(message) {
+        status.textContent = message;
+    }
 
-testForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = nameInput.value;
-    const color = colorSelect.value;
+    cloneBtn.addEventListener('click', async () => {
+        const url = repoUrl.value.trim();
+        if (!url) {
+            log('Por favor, insira uma URL de repositório válida', 'error');
+            return;
+        }
 
-    colorBox.style.background = color;
-    output.textContent = `Hello, ${name}! You selected ${color}.`;
-});
+        updateStatus('Clonando repositório...');
+        log(`Iniciando clone de ${url}`);
+        
+        try {
+            // Simulando operação de clone
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            log('Repositório clonado com sucesso!', 'success');
+            updateStatus('Pronto');
+        } catch (error) {
+            log(`Erro ao clonar: ${error.message}`, 'error');
+            updateStatus('Erro');
+        }
+    });
 
-// Add smooth scrolling for navigation
-document.querySelectorAll('nav a').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const section = document.querySelector(this.getAttribute('href'));
-        section.scrollIntoView({ behavior: 'smooth' });
+    pullBtn.addEventListener('click', async () => {
+        updateStatus('Atualizando repositório...');
+        log('Iniciando pull...');
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            log('Pull realizado com sucesso!', 'success');
+            updateStatus('Pronto');
+        } catch (error) {
+            log(`Erro no pull: ${error.message}`, 'error');
+            updateStatus('Erro');
+        }
+    });
+
+    pushBtn.addEventListener('click', async () => {
+        updateStatus('Enviando alterações...');
+        log('Iniciando push...');
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            log('Push realizado com sucesso!', 'success');
+            updateStatus('Pronto');
+        } catch (error) {
+            log(`Erro no push: ${error.message}`, 'error');
+            updateStatus('Erro');
+        }
     });
 });
