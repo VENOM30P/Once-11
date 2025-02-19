@@ -22,6 +22,9 @@ if [ -z "$(git config --get user.name)" ]; then
     git config --global user.name "$git_username"
 fi
 
+# Set the pull strategy to merge
+git config pull.rebase false
+
 # Check if we're already on main branch, if not create it
 current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 if [ "$current_branch" != "main" ]; then
@@ -29,14 +32,19 @@ if [ "$current_branch" != "main" ]; then
     git checkout main 2>/dev/null || git checkout -b main
 fi
 
-# Set the specific remote URL
-REMOTE_URL="https://github.com/VENOM30P/Once-11.git"
+# Set the specific remote URL with token authentication
+if [ -n "$GITHUB_TOKEN" ]; then
+    REMOTE_URL="https://${GITHUB_TOKEN}@github.com/VENOM30P/Once-11.git"
+else
+    echo "Error: GITHUB_TOKEN is not set. Please provide a GitHub Personal Access Token."
+    exit 1
+fi
 
 # Remove existing origin if it exists
 git remote remove origin 2>/dev/null || true
 
 # Add the new remote
-echo "Setting remote to: $REMOTE_URL"
+echo "Setting remote to: https://github.com/VENOM30P/Once-11.git"  # Don't print the token
 git remote add origin "$REMOTE_URL"
 
 # Create initial commit if repository is empty
