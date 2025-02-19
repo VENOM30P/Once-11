@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 // Endpoint para inicializar o Git
 app.post('/init-git', (req, res) => {
     console.log('Iniciando processo de inicialização do Git...');
-    exec('bash init_git.sh', (error, stdout, stderr) => {
+    exec('bash ../init_git.sh', (error, stdout, stderr) => {
         if (error) {
             console.error('Erro ao inicializar Git:', error);
             res.status(500).json({ success: false, message: 'Erro ao inicializar Git: ' + error.message });
@@ -91,8 +91,8 @@ app.post('/start-server', (req, res) => {
     }
 });
 
-// Inicia o servidor do painel de controle na porta 3005
-const PORT = 3005;
+// Inicia o servidor do painel de controle na porta 8080
+const PORT = 8080;
 
 console.log('Tentando iniciar o servidor na porta', PORT);
 

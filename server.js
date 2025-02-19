@@ -5,8 +5,15 @@ const app = express();
 // Configuração para servir arquivos estáticos da pasta test-page
 app.use(express.static('test-page'));
 
+// Configuração básica de logging
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
 // Rota principal
 app.get('/', (req, res) => {
+    console.log('Servindo página principal');
     res.sendFile(path.join(__dirname, 'test-page/index.html'));
 });
 
