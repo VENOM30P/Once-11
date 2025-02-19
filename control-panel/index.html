@@ -10,6 +10,13 @@
             max-width: 800px;
             margin: 20px auto;
             padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .button {
             display: block;
@@ -22,78 +29,109 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
         .button:hover {
             background-color: #1976D2;
         }
+        .button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
         #status {
             margin-top: 20px;
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
+            transition: all 0.3s;
+            display: none;
         }
         .success {
             background-color: #4CAF50;
             color: white;
+            display: block !important;
         }
         .error {
             background-color: #f44336;
             color: white;
+            display: block !important;
+        }
+        .loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .loading::after {
+            content: "...";
+            position: absolute;
+            right: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Painel de Controle</h1>
+    <div class="container">
+        <h1>Painel de Controle</h1>
+        <p>Siga os passos abaixo para iniciar o servidor:</p>
 
-    <button class="button" onclick="initGit()">1. Inicializar Repositório Git</button>
-    <button class="button" onclick="startServer()">2. Iniciar Servidor</button>
-    <button class="button" onclick="openChrome()">3. Abrir no Chrome</button>
+        <button id="initGitBtn" class="button" onclick="initGit()">1. Inicializar Repositório Git</button>
+        <button id="startServerBtn" class="button" onclick="startServer()">2. Iniciar Servidor</button>
+        <button id="openChromeBtn" class="button" onclick="openChrome()">3. Abrir no Chrome</button>
 
-    <div id="status"></div>
+        <div id="status"></div>
+    </div>
 
     <script>
-        let currentPort = 3000;
-
-        async function getCurrentPort() {
-            try {
-                const response = await fetch('/current-port');
-                const data = await response.json();
-                currentPort = data.port;
-            } catch (error) {
-                console.error('Error getting current port:', error);
+        // Função para desabilitar/habilitar botões durante operações
+        function setLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
             }
         }
 
-        // Atualiza a porta ao carregar a página
-        getCurrentPort();
-
         async function initGit() {
+            setLoading('initGitBtn', true);
             try {
                 const response = await fetch('/init-git', { method: 'POST' });
                 const data = await response.json();
                 updateStatus(data.message, data.success);
             } catch (error) {
-                updateStatus('Erro ao inicializar Git', false);
+                updateStatus('Erro ao inicializar Git: ' + error.message, false);
+            } finally {
+                setLoading('initGitBtn', false);
             }
         }
 
         async function startServer() {
+            setLoading('startServerBtn', true);
             try {
                 const response = await fetch('/start-server', { method: 'POST' });
                 const data = await response.json();
                 updateStatus(data.message, data.success);
             } catch (error) {
-                updateStatus('Erro ao iniciar servidor', false);
+                updateStatus('Erro ao iniciar servidor: ' + error.message, false);
+            } finally {
+                setLoading('startServerBtn', false);
             }
         }
 
         function openChrome() {
-            window.open(`http://localhost:${currentPort}`, '_blank');
+            window.open('http://localhost:3000', '_blank');
         }
 
         function updateStatus(message, success) {
             const statusDiv = document.getElementById('status');
             statusDiv.textContent = message;
             statusDiv.className = success ? 'success' : 'error';
+            statusDiv.style.display = 'block'; // Show the status message
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
         }
     </script>
 </body>

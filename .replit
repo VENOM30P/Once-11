@@ -46,7 +46,7 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node control-panel/server.js"
-waitForPort = 3003
+waitForPort = 3005
 
 [deployment]
 run = ["sh", "-c", "bash init_git.sh"]

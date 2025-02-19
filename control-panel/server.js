@@ -3,115 +3,118 @@ const { exec } = require('child_process');
 const path = require('path');
 const app = express();
 
-// Variável global para armazenar a porta atual
-let currentPort = null;
+console.log('Iniciando configuração do servidor do painel de controle...');
 
 // Configuração para servir arquivos estáticos
 app.use(express.static(path.join(__dirname)));
 
+// Middleware para logging
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
 app.get('/', (req, res) => {
+    console.log('Recebida requisição para a página inicial');
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Endpoint para obter a porta atual
-app.get('/current-port', (req, res) => {
-    res.json({ port: currentPort || 3000 });
-});
-
+// Endpoint para inicializar o Git
 app.post('/init-git', (req, res) => {
+    console.log('Iniciando processo de inicialização do Git...');
     exec('bash init_git.sh', (error, stdout, stderr) => {
         if (error) {
-            console.error('Git init error:', error);
-            res.json({ success: false, message: 'Erro ao inicializar Git: ' + error.message });
+            console.error('Erro ao inicializar Git:', error);
+            res.status(500).json({ success: false, message: 'Erro ao inicializar Git: ' + error.message });
             return;
         }
-        console.log('Git init success:', stdout);
+        console.log('Git inicializado com sucesso:', stdout);
         res.json({ success: true, message: 'Repositório Git inicializado com sucesso!' });
     });
 });
 
+// Gerenciamento do processo do servidor da aplicação
 let serverProcess = null;
 
-app.post('/start-server', (req, res) => {
-    try {
-        // Se existe um processo anterior, tenta matá-lo
-        if (serverProcess) {
-            console.log('Killing existing server process...');
+// Função para matar o processo do servidor se existir
+const killServerProcess = () => {
+    if (serverProcess) {
+        try {
+            console.log('Finalizando processo do servidor existente...');
             serverProcess.kill();
             serverProcess = null;
+        } catch (error) {
+            console.error('Erro ao finalizar processo:', error);
         }
+    }
+};
+
+app.post('/start-server', (req, res) => {
+    console.log('Iniciando servidor da aplicação...');
+    try {
+        // Mata processo anterior se existir
+        killServerProcess();
 
         const serverPath = path.join(__dirname, '..', 'server.js');
-        console.log('Starting server from path:', serverPath);
+        console.log('Iniciando servidor do caminho:', serverPath);
 
         // Inicia o novo processo do servidor
         serverProcess = exec(`node ${serverPath}`, (error, stdout, stderr) => {
             if (error) {
-                console.error('Server process error:', error);
+                console.error('Erro no processo do servidor:', error);
                 return;
             }
-            if (stdout) console.log('Server output:', stdout);
-            if (stderr) console.error('Server stderr:', stderr);
+            console.log('Saída do servidor:', stdout);
+            if (stderr) console.error('Erro do servidor:', stderr);
         });
 
         // Configura handlers para o processo
         serverProcess.on('error', (error) => {
-            console.error('Server process error:', error);
+            console.error('Erro no processo do servidor:', error);
             serverProcess = null;
         });
 
-        // Aguarda um momento para verificar se o servidor iniciou
+        // Verifica se o servidor iniciou corretamente
         setTimeout(() => {
             if (serverProcess && !serverProcess.killed) {
-                console.log('Server started successfully');
-                res.json({ success: true, message: 'Servidor iniciado na porta 3000!' });
+                console.log('Servidor iniciado com sucesso na porta 3000');
+                res.json({ success: true, message: 'Servidor iniciado com sucesso na porta 3000!' });
             } else {
-                console.error('Server failed to start');
-                res.json({ success: false, message: 'Erro ao iniciar servidor' });
+                console.error('Falha ao iniciar o servidor');
+                res.status(500).json({ success: false, message: 'Erro ao iniciar o servidor' });
             }
         }, 2000);
 
     } catch (error) {
-        console.error('Error in start-server route:', error);
-        res.json({ success: false, message: 'Erro ao iniciar servidor: ' + error.message });
+        console.error('Erro ao iniciar servidor:', error);
+        res.status(500).json({ success: false, message: 'Erro ao iniciar servidor: ' + error.message });
     }
 });
 
-// Array de portas para tentar
-const PORTS = [3001, 3002, 3003, 3004, 3005];
-let currentPortIndex = 0;
+// Inicia o servidor do painel de controle na porta 3005
+const PORT = 3005;
 
-// Função para tentar iniciar o servidor em uma porta específica
-const tryPort = (port) => {
-    console.log(`Tentando iniciar servidor na porta ${port}...`);
-    return app.listen(port, '0.0.0.0', () => {
-        currentPort = port;
-        console.log(`Painel de controle rodando em http://0.0.0.0:${port}`);
-    });
-};
+console.log('Tentando iniciar o servidor na porta', PORT);
 
-// Função para tentar a próxima porta disponível
-const startServer = () => {
-    if (currentPortIndex >= PORTS.length) {
-        console.error('Não foi possível encontrar uma porta disponível');
+// Verifica se a porta está em uso antes de tentar iniciar
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Painel de controle rodando em http://0.0.0.0:${PORT}`);
+}).on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`Porta ${PORT} já está em uso. Por favor, verifique se não há outro servidor rodando.`);
         process.exit(1);
-        return;
+    } else {
+        console.error('Erro ao iniciar o painel de controle:', error);
+        process.exit(1);
     }
+});
 
-    const port = PORTS[currentPortIndex];
-    const server = tryPort(port);
-
-    server.on('error', (error) => {
-        if (error.code === 'EADDRINUSE') {
-            console.log(`Porta ${port} em uso, tentando próxima porta...`);
-            currentPortIndex++;
-            startServer();
-        } else {
-            console.error('Erro ao iniciar servidor:', error);
-            process.exit(1);
-        }
+// Limpeza ao encerrar
+process.on('SIGTERM', () => {
+    console.log('Recebido sinal SIGTERM, encerrando...');
+    killServerProcess();
+    server.close(() => {
+        console.log('Servidor encerrado');
+        process.exit(0);
     });
-};
-
-// Inicia o servidor
-startServer();
+});
