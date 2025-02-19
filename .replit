@@ -17,10 +17,6 @@ args = "Git Init"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Test Page Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Control Panel"
 
 [[workflows.workflow]]
@@ -38,21 +34,6 @@ task = "shell.exec"
 args = "bash init_git.sh"
 
 [[workflows.workflow]]
-name = "Test Page Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "node server.js"
-waitForPort = 3000
-
-[[workflows.workflow]]
 name = "Control Panel"
 author = "agent"
 
@@ -65,7 +46,7 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node control-panel/server.js"
-waitForPort = 3001
+waitForPort = 3003
 
 [deployment]
 run = ["sh", "-c", "bash init_git.sh"]
@@ -77,3 +58,11 @@ externalPort = 80
 [[ports]]
 localPort = 3001
 externalPort = 3001
+
+[[ports]]
+localPort = 3002
+externalPort = 3002
+
+[[ports]]
+localPort = 3003
+externalPort = 3003

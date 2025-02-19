@@ -43,14 +43,29 @@
 </head>
 <body>
     <h1>Painel de Controle</h1>
-    
+
     <button class="button" onclick="initGit()">1. Inicializar Repositório Git</button>
     <button class="button" onclick="startServer()">2. Iniciar Servidor</button>
     <button class="button" onclick="openChrome()">3. Abrir no Chrome</button>
-    
+
     <div id="status"></div>
 
     <script>
+        let currentPort = 3000;
+
+        async function getCurrentPort() {
+            try {
+                const response = await fetch('/current-port');
+                const data = await response.json();
+                currentPort = data.port;
+            } catch (error) {
+                console.error('Error getting current port:', error);
+            }
+        }
+
+        // Atualiza a porta ao carregar a página
+        getCurrentPort();
+
         async function initGit() {
             try {
                 const response = await fetch('/init-git', { method: 'POST' });
@@ -72,7 +87,7 @@
         }
 
         function openChrome() {
-            window.open('http://localhost:3000', '_blank');
+            window.open(`http://localhost:${currentPort}`, '_blank');
         }
 
         function updateStatus(message, success) {
